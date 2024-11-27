@@ -9,27 +9,27 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
             <SearchBar Placeholder="Buscar..."
-                       x:Name="filtroSearchBar"
-                       Grid.Row="0"
-                       Grid.Column="0"
-                       TextChanged="filtroSearchBar_TextChanged"/>
-            <Button Text="Nuevo Empleado"
-                    x:Name="NuevoEmpleadoBoton"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Clicked="NuevoEmpleadoBoton_Clicked"
-                />
+                   x:Name="filtroEntry"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   TextChanged="filtroSearchBar_TextChanged"/>
+            <Button Text="Nuevo"
+                x:Name="NuevoButton"
+                Grid.Row="0"
+                Grid.Column="1"
+                Clicked="NuevoEmpleadoBoton_Clicked"/>
 
             <CollectionView x:Name="listaCollection"
-                            ItemsSource="{Binding Lista}"
-                            Grid.Row="1"
-                            Grid.Column="2">
+                        ItemsSource="{Binding Lista}"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnSpacing="10" Padding="5">
@@ -42,18 +42,18 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Image Grid.RowSpan="2"
-                                   Source="profile.jpg"
-                                   Aspect="AspectFill"
-                                   HeightRequest="60"
-                                   WidthRequest="60"/>
+                               Source="profile.jpg"
+                               Aspect="AspectFill"
+                               HeightRequest="60"
+                               WidthRequest="60"/>
                             <Label Grid.Column="1"
-                                   Grid.Row="0"
-                                   Text="{Binding NombreCompleto}"
-                                   FontAttributes="Bold"
-                                   FontSize="20"/>
+                               Grid.Row="0"
+                               Text="{Binding NombreCompleto}"
+                               FontAttributes="Bold"
+                               FontSize="20"/>
                             <Label Grid.Column="1"
-                                   Grid.Row="1"
-                                   Text="{Binding Cargo.Nombre}"/>
+                               Grid.Row="1"
+                               Text="{Binding Cargo.Nombre}"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

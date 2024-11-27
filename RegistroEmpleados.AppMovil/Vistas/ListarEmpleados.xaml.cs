@@ -28,7 +28,15 @@ public partial class ListarEmpleados : ContentPage
 
     private void filtroSearchBar_TextChanged(object sender, TextChangedEventArgs e)
     {
-
+        string filtro=filtroEntry.Text.ToLower();
+        if (filtro.Length > 0) 
+        {
+            listaCollection.ItemsSource = Lista.Where(x => x.NombreCompleto.ToLower().Contains(filtro));
+        }
+        else
+        {
+            listaCollection.ItemsSource = Lista;
+        }
     }
 
     private async void NuevoEmpleadoBoton_Clicked(object sender, EventArgs e)
