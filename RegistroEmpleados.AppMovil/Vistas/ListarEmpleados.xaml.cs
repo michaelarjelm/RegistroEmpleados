@@ -17,7 +17,7 @@ public partial class ListarEmpleados : ContentPage
 
     private void CargarLista()
     {
-        client.Child("Empleados").AsObservable<Empleado>().Subscribe((empleado) =>
+        client.Child("Empleado").AsObservable<Empleado>().Subscribe((empleado) =>
         {
             if (empleado.Object != null)
             {
