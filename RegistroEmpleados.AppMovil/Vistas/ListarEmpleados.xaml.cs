@@ -14,6 +14,6 @@ public partial class ListarEmpleados : ContentPage
 
     private async void NuevoEmpleadoBoton_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(CrearNuevoEmpleado));
+        await Navigation.PushAsync(new CrearEmpleado());
     }
 }
