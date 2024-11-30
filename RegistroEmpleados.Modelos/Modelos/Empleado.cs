@@ -16,7 +16,7 @@ namespace RegistroEmpleados.Modelos.Modelos
 
         public int Sueldo { get; set; }
         public DateTime FechaInicio { get; set; }
-        public Cargo cargo { get; set; }
+        public Cargo Cargo { get; set; }
         public string NombreCompleto => $"{PrimerNombre} {PrimerApellido}";
     }
 }
