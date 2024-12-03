@@ -15,15 +15,27 @@ public partial class ListarEmpleados : ContentPage
         CargarLista();
     }
 
-    private void CargarLista()
+    private async void CargarLista()
     {
-        client.Child("Empleados").AsObservable<Empleado>().Subscribe((empleado) =>
+        var empleados = await client
+           .Child("Empleados")
+           .OnceAsync<Empleado>();
+        Lista.Clear(); // Limpia la lista antes de agregar nuevos datos
+
+        foreach (var empleado in empleados)
         {
-            if (empleado.Object != null)
+            Lista.Add(new Empleado
             {
-                Lista.Add(empleado.Object);
-            }
-        });
+                Id = empleado.Key, 
+                PrimerNombre = empleado.Object.PrimerNombre,
+                SegundoNombre = empleado.Object.SegundoNombre,
+                PrimerApellido = empleado.Object.PrimerApellido,
+                SegundoApellido = empleado.Object.SegundoApellido,
+                CorreoElectronico = empleado.Object.CorreoElectronico,
+                FechaInicio = empleado.Object.FechaInicio,
+                Cargo = empleado.Object.Cargo
+            });
+        }
     }
 
     private void filtroSearchBar_TextChanged(object sender, TextChangedEventArgs e)
@@ -42,5 +54,22 @@ public partial class ListarEmpleados : ContentPage
     private async void NuevoEmpleadoBoton_Clicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new CrearEmpleado());
+    }
+
+    private async void editarButton_Clicked(object sender, EventArgs e)
+    {
+        var boton = sender as ImageButton; // Obtén el botón que disparó el evento
+        var empleado = boton?.CommandParameter as Empleado; // Obtén el empleado asociado
+
+        if (empleado != null && !string.IsNullOrEmpty(empleado.Id))
+        {
+            // Navega a la vista de edición pasando el ID del empleado
+            await Navigation.PushAsync(new EditarEmpleado(empleado.Id));
+        }
+        else
+        {
+            // Muestra un mensaje si no se pudo obtener el empleado
+            await DisplayAlert("Error", "No se pudo obtener la información del empleado.", "OK");
+        }
     }
 }
