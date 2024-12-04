@@ -1,4 +1,5 @@
 using Firebase.Database;
+using Firebase.Database.Query;
 using RegistroEmpleados.Modelos.Modelos;
 using System.Collections.ObjectModel;
 
@@ -20,9 +21,13 @@ public partial class ListarEmpleados : ContentPage
         var empleados = await client
            .Child("Empleados")
            .OnceAsync<Empleado>();
-        Lista.Clear(); // Limpia la lista antes de agregar nuevos datos
 
-        foreach (var empleado in empleados)
+        var empleadosActivos = empleados
+            .Where(e => e.Object.Estado == true)
+            .ToList();
+        Lista.Clear(); 
+
+        foreach (var empleado in empleadosActivos)
         {
             Lista.Add(new Empleado
             {
@@ -32,7 +37,9 @@ public partial class ListarEmpleados : ContentPage
                 PrimerApellido = empleado.Object.PrimerApellido,
                 SegundoApellido = empleado.Object.SegundoApellido,
                 CorreoElectronico = empleado.Object.CorreoElectronico,
+                Sueldo = empleado.Object.Sueldo,
                 FechaInicio = empleado.Object.FechaInicio,
+                Estado = empleado.Object.Estado,
                 Cargo = empleado.Object.Cargo
             });
         }
@@ -58,18 +65,65 @@ public partial class ListarEmpleados : ContentPage
 
     private async void editarButton_Clicked(object sender, EventArgs e)
     {
-        var boton = sender as ImageButton; // Obtén el botón que disparó el evento
-        var empleado = boton?.CommandParameter as Empleado; // Obtén el empleado asociado
+        var boton = sender as ImageButton; 
+        var empleado = boton?.CommandParameter as Empleado; 
 
         if (empleado != null && !string.IsNullOrEmpty(empleado.Id))
         {
-            // Navega a la vista de edición pasando el ID del empleado
             await Navigation.PushAsync(new EditarEmpleado(empleado.Id));
         }
         else
         {
-            // Muestra un mensaje si no se pudo obtener el empleado
             await DisplayAlert("Error", "No se pudo obtener la información del empleado.", "OK");
         }
+    }
+
+    private async void deshabilitarButton_Clicked(object sender, EventArgs e)
+    {
+        var boton = sender as ImageButton;
+        var empleado = boton?.CommandParameter as Empleado;
+
+        if (empleado == null)
+        {
+            await DisplayAlert("Error", "No se pudo obtener la información del empleado.", "OK");
+            return;
+        }
+
+        bool confirmacion = await DisplayAlert(
+        "Confirmación",
+        $"¿Está seguro de deshabilitar al empleado {empleado.NombreCompleto}?",
+        "Sí", "No");
+
+        if (confirmacion)
+        {
+            try
+            {
+                empleado.Estado = false;
+               
+                await client
+                    .Child("Empleados")
+                    .Child(empleado.Id) 
+                    .PutAsync(empleado);
+
+                await DisplayAlert("Éxito", $"El empleado {empleado.NombreCompleto} ha sido deshabilitado.", "OK");
+                CargarLista();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Ocurrió un error al deshabilitar al empleado: {ex.Message}", "OK");
+            }
+        }
+    }
+
+    private async void listaCollection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var empleado = e.CurrentSelection.FirstOrDefault() as Empleado;
+
+        if (empleado != null)
+        {
+            await Navigation.PushAsync(new DetalleEmpleado(empleado));
+        }
+
+    ((CollectionView)sender).SelectedItem = null;
     }
 }

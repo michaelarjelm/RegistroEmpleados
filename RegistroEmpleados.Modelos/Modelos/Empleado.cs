@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RegistroEmpleados.Modelos.Modelos
+﻿namespace RegistroEmpleados.Modelos.Modelos
 {
     public class Empleado
     {
@@ -17,6 +11,12 @@ namespace RegistroEmpleados.Modelos.Modelos
         public int Sueldo { get; set; }
         public DateTime FechaInicio { get; set; }
         public Cargo? Cargo { get; set; }
+        public bool? Estado { get; set; }
         public string NombreCompleto => $"{PrimerNombre} {PrimerApellido}";
+        public string EstadoTexto =>
+            Estado.HasValue
+                ? (Estado.Value ? "Activo" : "Inactivo")
+                : "Estado Desconocido";
+
     }
 }

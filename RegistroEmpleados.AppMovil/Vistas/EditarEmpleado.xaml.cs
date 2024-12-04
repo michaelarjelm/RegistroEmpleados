@@ -9,15 +9,18 @@ namespace RegistroEmpleados.AppMovil.Vistas;
 public partial class EditarEmpleado : ContentPage
 {
     FirebaseClient client = new FirebaseClient("https://registroempleados-d7b5e-default-rtdb.firebaseio.com/");
-    public List<Cargo> Cargos { get; set; }
+    public List<Cargo> Cargos { get; set; }  
     public ObservableCollection<string> ListaCargos { get; set; } = new ObservableCollection<string>();
+    private Empleado empleadoActual= new Empleado(); 
+    private string empleadoId;
+
     public EditarEmpleado(string idEmpleado)
     {
         InitializeComponent();
         BindingContext = this;
-        CargarListaCargos();
-
-        CargarEmpleado(idEmpleado);
+        empleadoId = idEmpleado;
+        CargarListaCargos();        
+        CargarEmpleado(empleadoId);
     }
 
     private async void CargarListaCargos()
@@ -64,6 +67,60 @@ public partial class EditarEmpleado : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Error", "Error: "+ex.Message, "OK");
+        }
+    }
+
+    private async void ActualizarButton_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(PrimerNombreEntry.Text) ||
+                string.IsNullOrWhiteSpace(PrimerApellidoEntry.Text) ||
+                string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
+                string.IsNullOrWhiteSpace(SueldoEntry.Text) ||
+                CargoPicker.SelectedItem == null)
+            {
+                await DisplayAlert("Error", "Todos los campos son obligatorios.", "OK");
+                return;
+            }
+
+            if (!CorreoEntry.Text.Contains("@"))
+            {
+                await DisplayAlert("Error", "El correo electrónico no es válido.", "OK");
+                return;
+            }
+
+            if (!int.TryParse(SueldoEntry.Text, out int sueldo))
+            {
+                await DisplayAlert("Error", "El sueldo debe ser un número válido.", "OK");
+                return;
+            }
+
+            if (sueldo <= 0)
+            {
+                await DisplayAlert("Error", "El sueldo debe ser mayor a 0.", "OK");
+                return;
+            }
+            empleadoActual.Id = empleadoId;
+            empleadoActual.PrimerNombre = PrimerNombreEntry.Text.Trim();
+            empleadoActual.SegundoNombre = SegundoNombreEntry.Text?.Trim();
+            empleadoActual.PrimerApellido = PrimerApellidoEntry.Text.Trim();
+            empleadoActual.SegundoApellido = SegundoApellidoEntry.Text?.Trim();
+            empleadoActual.CorreoElectronico = CorreoEntry.Text.Trim();
+            empleadoActual.Sueldo = sueldo;
+            empleadoActual.Cargo = new Cargo { Nombre = CargoPicker.SelectedItem.ToString() };
+
+            await client
+                .Child("Empleados")
+                .Child(empleadoActual.Id) 
+                .PutAsync(empleadoActual);
+
+            await DisplayAlert("Éxito", "El empleado se ha actualizado correctamente.", "OK");
+            await Navigation.PopAsync(); 
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Ocurrió un error al guardar los cambios: {ex.Message}", "OK");
         }
     }
 }

@@ -5,28 +5,34 @@
              Title="CrearEmpleado">
     <VerticalStackLayout Padding="10" Spacing="10">
         <Picker Title="Seleccionar Cargo"
-                ItemsSource="{Binding Cargos}"
-                ItemDisplayBinding="{Binding Nombre}"
-                x:Name="cargoPicker"/>
+            ItemsSource="{Binding Cargos}"
+            ItemDisplayBinding="{Binding Nombre}"
+            x:Name="cargoPicker"/>
         <Entry  Placeholder="Nombre"
-                x:Name="primerNombreEntry"/>
+            x:Name="primerNombreEntry"/>
         <Entry  Placeholder="Segundo Nombre"
-                x:Name="segundoNombreEntry"/>        
+            x:Name="segundoNombreEntry"/>
         <Entry  Placeholder="Primer Apellido"
-                x:Name="primerApellidoEntry"/>
+            x:Name="primerApellidoEntry"/>
         <Entry  Placeholder="Segundo Apellido"
-                x:Name="segundoApellidoEntry"/>
+            x:Name="segundoApellidoEntry"/>
         <Entry Placeholder="Correo electrónico"
-               x:Name="correoEntry"
-               Keyboard="Email"/>
+           x:Name="correoEntry"
+           Keyboard="Email"/>
         <Entry Placeholder="Sueldo"
-               x:Name="sueldoEntry"
-               Keyboard="Numeric"/>
+           x:Name="sueldoEntry"
+           Keyboard="Numeric"/>
         <DatePicker x:Name="fechaInicioPicker"/>
+
+        <!-- Nuevo: Switch para Estado Activo/Inactivo -->
+        <HorizontalStackLayout Spacing="10">
+            <Label Text="Activo"/>
+            <Switch x:Name="estadoSwitch" IsToggled="true"/>
+        </HorizontalStackLayout>
+
         <Button Text="Guardar"
-                x:Name="guardarButton"
-                Clicked="guardarButton_Clicked"/>
-
-
+            x:Name="guardarButton"
+            Clicked="guardarButton_Clicked"/>
     </VerticalStackLayout>
+
 </ContentPage>

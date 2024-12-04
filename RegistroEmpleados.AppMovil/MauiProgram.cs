@@ -18,27 +18,62 @@ namespace RegistroEmpleados.AppMovil
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-#if DEBUG
+
             builder.Logging.AddDebug();
-#endif
-            Registrar();
+            ActualizarCargo();
+            ActualizarEmpleado();
             return builder.Build();
-
-
         }
 
-        public static void Registrar()
+        public static async Task ActualizarCargo()
         {
             FirebaseClient client = new FirebaseClient("https://registroempleados-d7b5e-default-rtdb.firebaseio.com/");
 
-            var cargos = client.Child("Cargos").OnceAsync<Cargo>();
+            var cargos = await client.Child("Cargos").OnceAsync<Cargo>();
 
-            if (cargos.Result.Count == 0) 
+            if (cargos.Count == 0)
             {
-                client.Child("Cargos").PostAsync(new Cargo { Nombre = "Administrador" });
-                client.Child("Cargos").PostAsync(new Cargo { Nombre = "Supervisor" });
-                client.Child("Cargos").PostAsync(new Cargo { Nombre = "Usuario" });
+                await client.Child("Cargos").PostAsync(new Cargo { Nombre = "Administrador", Estado = true });
+                await client.Child("Cargos").PostAsync(new Cargo { Nombre = "Supervisor", Estado = true });
+                await client.Child("Cargos").PostAsync(new Cargo { Nombre = "Usuario", Estado = true });
             }
+            else
+            {
+                foreach (var cargo in cargos)
+                {
+                    if (cargo.Object.Estado == null)
+                    {
+                        var cargoActualizado = cargo.Object;
+                        cargoActualizado.Estado = true;
+
+                        await client
+                            .Child("Cargos")
+                            .Child(cargo.Key)
+                            .PutAsync(cargoActualizado);
+                    }
+                }
+            }
+        }
+        public static async Task ActualizarEmpleado()
+        {
+            FirebaseClient client = new FirebaseClient("https://registroempleados-d7b5e-default-rtdb.firebaseio.com/");
+
+            var empleados = await client.Child("Empleados").OnceAsync<Empleado>();
+
+            foreach (var empleado in empleados)
+            {
+                if (empleado.Object.Estado == null)
+                {
+                    var empleadoActualizado = empleado.Object;
+                    empleadoActualizado.Estado = true;
+
+                    await client
+                        .Child("Empleados")
+                        .Child(empleado.Key)
+                        .PutAsync(empleadoActualizado);
+                }
+            }
+
         }
     }
 }

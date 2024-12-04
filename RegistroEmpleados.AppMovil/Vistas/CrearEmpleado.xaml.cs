@@ -36,6 +36,7 @@ public partial class CrearEmpleado : ContentPage
             CorreoElectronico = correoEntry.Text,
             FechaInicio = fechaInicioPicker.Date,
             Sueldo = int.Parse(sueldoEntry.Text),
+            Estado = estadoSwitch.IsToggled,
             Cargo = cargo
         };
 

@@ -28,9 +28,10 @@
             <Entry x:Name="SueldoEntry" />
             
             <Button Text="Actualizar"
-                    x:Name="GuardarButton"
+                    x:Name="ActualizarButton"
                     TextColor="White"
-                    FontAttributes="Bold" />
+                    FontAttributes="Bold"
+                    Clicked="ActualizarButton_Clicked"/>
         </StackLayout>
     </ScrollView>
 </ContentPage>
