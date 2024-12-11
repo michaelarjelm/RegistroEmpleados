@@ -44,4 +44,9 @@ public partial class ListarEmpleados : ContentPage
     {
         await Navigation.PushAsync(new CrearEmpleado());
     }
+
+    private void EditarButton_Clicked(object sender, EventArgs e)
+    {
+
+    }
 }
