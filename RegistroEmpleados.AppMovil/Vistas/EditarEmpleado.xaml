@@ -23,13 +23,14 @@
                 Title="Seleccionar Cargo"
                 ItemsSource="{Binding ListaCargos}" />
 
+        <Label Text="Sueldo:" />
+        <Entry x:Name="EditSueldoEntry" Keyboard="Numeric"/>
+
         <Button Text="Actualizar"
                 x:Name="ActualizarButton"
                 TextColor="White"
                 FontAttributes="Bold"
                 Clicked="ActualizarButton_Clicked"
                         />
-        <Label Text="Sueldo:" />
-        <Entry x:Name="SueldoEntry" Keyboard="Numeric"/>
     </StackLayout>
 </ContentPage>
