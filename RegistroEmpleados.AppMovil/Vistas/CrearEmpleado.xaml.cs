@@ -7,10 +7,9 @@ namespace RegistroEmpleados.AppMovil.Vistas;
 public partial class CrearEmpleado : ContentPage
 {
     FirebaseClient client = new FirebaseClient("https://registroempleados-d7b5e-default-rtdb.firebaseio.com/");
-    public List<Cargo> Cargos {  get; set; }
-
+    public List<Cargo> Cargos { get; set; }
     public CrearEmpleado()
-    {
+	{
         InitializeComponent();
         ListarCargos();
         BindingContext = this;
@@ -19,10 +18,10 @@ public partial class CrearEmpleado : ContentPage
     private void ListarCargos()
     {
         var cargos = client.Child("Cargos").OnceAsync<Cargo>();
-        Cargos=cargos.Result.Select(x=>x.Object).ToList();        
+        Cargos = cargos.Result.Select(x => x.Object).ToList();
     }
 
-    private async void guardarButton_Clicked(object sender, EventArgs e)
+    private async void guardarBoton_Clicked(object sender, EventArgs e)
     {
         Cargo cargo = cargoPicker.SelectedItem as Cargo;
 
@@ -48,6 +47,5 @@ public partial class CrearEmpleado : ContentPage
         {
             await DisplayAlert("Error", ex.Message, "OK");
         }
-
     }
 }

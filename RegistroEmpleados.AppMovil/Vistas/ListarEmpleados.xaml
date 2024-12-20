@@ -38,6 +38,8 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Image Grid.RowSpan="2"
@@ -53,19 +55,27 @@
                             <Label Grid.Column="1"
                                    Grid.Row="1"
                                    Text="{Binding Cargo.Nombre}"/>
-                            <ImageButton x:Name="EditarButton"
+                            <ImageButton x:Name="editarButton"
                                          Grid.Column="2"
-                                         Grid.RowSpan="1"
                                          Source="edit_icon.png"
                                          BackgroundColor="Transparent"
                                          HeightRequest="25"
                                          WidthRequest="25"
                                          CommandParameter="{Binding .}"
-                                         Clicked="EditarButton_Clicked"/>
+                                         Clicked="editarButton_Clicked"/>
+                            <ImageButton x:Name="deshabilitarButton"
+                                         Grid.Column="3"
+                                         Grid.RowSpan="1"
+                                         Source="disable.png"
+                                         BackgroundColor="Transparent"
+                                         HeightRequest="25"
+                                         WidthRequest="25"
+                                         CommandParameter="{Binding .}"
+                                         Clicked="deshabilitarButton_Clicked"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-                
+
             </CollectionView>
         </Grid>
     </ScrollView>

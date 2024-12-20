@@ -14,7 +14,6 @@ namespace RegistroEmpleados.Modelos.Modelos
         public string? PrimerApellido { get; set; }
         public string? SegundoApellido { get; set; }
         public string? CorreoElectronico { get; set; }
-
         public int Sueldo { get; set; }
         public DateTime FechaInicio { get; set; }
         public Cargo Cargo { get; set; }
