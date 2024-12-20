@@ -1,4 +1,5 @@
 using Firebase.Database;
+using Firebase.Database.Query;
 using LiteDB;
 using RegistroEmpleados.Modelos.Modelos;
 using System.Collections.ObjectModel;
@@ -18,6 +19,7 @@ public partial class ListarEmpleados : ContentPage
 
     private async void CargarLista()
     {
+        Lista.Clear();
         var empleados = await client.Child("Empleados").OnceAsync<Empleado>();
 
         var empleadosActivos= empleados.Where(e=>e.Object.Estado==true).ToList();
@@ -74,8 +76,35 @@ public partial class ListarEmpleados : ContentPage
         }
     }
 
-    private void deshabilitarButton_Clicked(object sender, EventArgs e)
+    private async void deshabilitarButton_Clicked(object sender, EventArgs e)
     {
+        var boton = sender as ImageButton;
+        var empleado = boton?.CommandParameter as Empleado;
 
+        if (empleado == null) 
+        {
+            await DisplayAlert("Error", "No se pudo obtener la información del empleado", "OK");
+            return;
+        }
+
+        bool confirmacion = await DisplayAlert
+            ("Confirmación", $"Está seguro que desea deshabilitar al empleado {empleado.NombreCompleto}", "Sí", "No");
+
+        if (confirmacion)
+        {
+            try
+            {
+                empleado.Estado = false;
+                await client.Child("Empleados").Child(empleado.Id).PutAsync(empleado);
+                await DisplayAlert("Exito", $"Se ha deshabilitado correctamente al usuario {empleado.NombreCompleto}", "OK");
+                CargarLista();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -2,6 +2,8 @@ using Firebase.Database;
 using Firebase.Database.Query;
 using RegistroEmpleados.Modelos.Modelos;
 using System.Collections.ObjectModel;
+using System.Security;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RegistroEmpleados.AppMovil.Vistas;
 
@@ -10,7 +12,7 @@ public partial class EditarEmpleado : ContentPage
     FirebaseClient client = new FirebaseClient("https://registroempleados-d7b5e-default-rtdb.firebaseio.com/");
     public List<Cargo> Cargos { get; set; }
     public ObservableCollection<string> ListaCargos { get; set; }= new ObservableCollection<string>();
-    private Empleado empleadoActual = new Empleado();
+    private Empleado empleadoActualizado = new Empleado();
     private string empleadoId;
     public EditarEmpleado(string idEmpleado)
 	{
@@ -57,8 +59,61 @@ public partial class EditarEmpleado : ContentPage
         }
     }
 
-    private void ActualizarButton_Clicked(object sender, EventArgs e)
+    private async void ActualizarButton_Clicked(object sender, EventArgs e)
     {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(EditPrimerNombreEntry.Text)||
+                string.IsNullOrWhiteSpace(EditSegundoNombreEntry.Text)||
+                string.IsNullOrWhiteSpace(EditPrimerApellidoEntry.Text)||
+                string.IsNullOrWhiteSpace(EditSegundoApellidoEntry.Text)||
+                string.IsNullOrWhiteSpace(EditCorreoEntry.Text)||
+                string.IsNullOrWhiteSpace(EditSueldoEntry.Text)||
+                EditCargoPicker.SelectedItem == null) 
+            {
 
+                await DisplayAlert("Error", "Todos los campos son obligatorios", "OK");
+                return;
+            }
+
+            if (!EditCorreoEntry.Text.Contains("@")) 
+            {
+                await DisplayAlert("Error", "El correo electrónico no es válido", "OK");
+                return;
+            }
+
+            if(!int.TryParse(EditSueldoEntry.Text, out int sueldo))
+            {
+                await DisplayAlert("Error", "el sueldo debe ser un número válido", "OK");
+                return ;
+            }
+
+            if(sueldo <= 0)
+            {
+                await DisplayAlert("Error", "El sueldo debe ser mayor a 0", "OK");
+                return;
+            }
+
+            empleadoActualizado.Id=empleadoId;
+            empleadoActualizado.PrimerNombre=EditPrimerNombreEntry.Text.Trim();
+            empleadoActualizado.SegundoNombre= EditSegundoNombreEntry.Text.Trim();
+            empleadoActualizado.PrimerApellido= EditPrimerApellidoEntry.Text.Trim(); 
+            empleadoActualizado.SegundoApellido= EditSegundoApellidoEntry.Text.Trim(); 
+            empleadoActualizado.CorreoElectronico=EditCorreoEntry.Text.Trim(); 
+            empleadoActualizado.Sueldo=sueldo;
+            empleadoActualizado.Estado = estadoSwitch.IsToggled;
+            empleadoActualizado.Cargo=new Cargo { Nombre=EditCargoPicker.SelectedItem.ToString() };
+
+            await client.Child("Empleados").Child(empleadoActualizado.Id).PutAsync(empleadoActualizado);
+
+            await DisplayAlert("Éxito", "El empleado se ha actualizado correctamente", "OK");
+            await Navigation.PopAsync();
+
+        }
+        catch (Exception ex)
+        {
+
+            await DisplayAlert("Error", "Error" + ex.Message, "OK");
+        }
     }
 }
